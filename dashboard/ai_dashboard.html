@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA AI Research Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0B3D91 0%, #000000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #FC3D21, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .ai-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 20px;
+            color: #FC3D21;
+        }
+
+        .ai-selector {
+            margin-bottom: 25px;
+        }
+
+        .ai-option {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .ai-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-option.active {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .ai-option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .ai-option-name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .ai-option-desc {
+            font-size: 0.85em;
+            color: #aaa;
+        }
+
+        .search-modes {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mode-btn.active {
+            border-color: #FC3D21;
+            background: rgba(252, 61, 33, 0.2);
+        }
+
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .search-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #FC3D21, #ff6b4a);
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(252, 61, 33, 0.4);
+        }
+
+        .ai-chat {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            min-height: 300px;
+            display: none;
+        }
+
+        .ai-chat.active {
+            display: block;
+        }
+
+        .chat-messages {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            background: linear-gradient(45deg, #0B3D91, #1a5fb4);
+            margin-left: auto;
+        }
+
+        .message.ai {
+            background: rgba(0, 255, 136, 0.15);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .ai-analysis {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid #00ff88;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .results-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .article-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(252, 61, 33, 0.3);
+            border-color: #FC3D21;
+        }
+
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .article-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .ai-score {
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .article-meta {
+            color: #aaa;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .article-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            font-size: 0.9em;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: relative;
+            }
+        }
+
+        .stats-panel {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(11, 61, 145, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .top-authors {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <script>
+        // Verificar si el usuario está autenticado
+        async function verificarAutenticacion() {
+            try {
+                const response = await fetch('backend/auth.php?action=verificar');
+                const result = await response.json();
+                
+                if (!result.success) {
+                    // Redirigir al login
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error('Error verificando sesión:', error);
+            }
+        }
+        
+        // Ejecutar al cargar la página
+        verificarAutenticacion();
+    </script>
+
+    <div class="container">
+        <header>
+            <h1>🚀 NASA AI Research Database</h1>
+            <div class="ai-badge">✨ Powered by AI</div>
+        </header>
+
+        <!-- Panel de Estadísticas -->
+<div id="statsPanel" class="stats-panel" style="display:none;">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" id="totalArticulos">0</div>
+            <div class="stat-label">Total Artículos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalFlora">0</div>
+            <div class="stat-label">Estudios de Flora</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalFauna">0</div>
+            <div class="stat-label">Estudios de Fauna</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="promedioRelevancia">0</div>
+            <div class="stat-label">Relevancia Promedio</div>
+        </div>
+    </div>
+    <div class="top-authors">
+        <h3>Top Autores</h3>
+        <div id="topAutoresList"></div>
+    </div>
+</div>
+
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3>🤖 Seleccionar IA</h3>
+                <div class="ai-selector">
+                    <div class="ai-option active" data-provider="claude">
+                        <div class="ai-option-header">
+                            <span class="ai-option-name">Claude</span>
+                            <span>⭐</span>
+                        </div>
+                        <div class="ai-option-desc">Mejor para análisis científico profundo</div>
+                    </div>
+                    
+                    <div class="ai-option" data-provider="openai">
+                        <div class="ai-option-header">
+                            <span class="ai-option-name">ChatGPT</span>
+                            <span>🔥</span>
+                        </div>
+                        <div class="ai-option-desc">Búsqueda semántica con embeddings</div>
+                    </div>
+                    
+                    <div class="ai-option" data-provider="gemini">
+                        <div class="ai-option-header">
+                            <span class="ai-option-name">Gemini</span>
+                            <span>⚡</span>
+                        </div>
+                        <div class="ai-option-desc">Contexto masivo (1M tokens)</div>
+                    </div>
+                </div>
+
+                <h3>🔍 Modo de Búsqueda</h3>
+                <div class="search-modes">
+                    <button class="mode-btn active" data-mode="ai_search">
+                        <strong>🧠 Búsqueda Inteligente</strong><br>
+                        <small>IA mejora tu búsqueda automáticamente</small>
+                    </button>
+                    
+                    <button class="mode-btn" data-mode="semantic_search">
+                        <strong>🎯 Búsqueda Semántica</strong><br>
+                        <small>Encuentra por significado, no solo palabras</small>
+                    </button>
+                    
+                    <button class="mode-btn" data-mode="chat">
+                        <strong>💬 Chat con IA</strong><br>
+                        <small>Pregunta sobre los documentos</small>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Search Box -->
+                <div class="search-box">
+                    <div class="search-input-group">
+                        <input type="text" id="searchInput" placeholder="Buscar... ej: ¿Qué sabemos sobre agua en Marte?" />
+                        <button onclick="ejecutarBusqueda()">🔍 Buscar</button>
+                    </div>
+                </div>
+
+                <!-- AI Chat Mode -->
+                <div id="chatMode" class="ai-chat">
+                    <h3>💬 Chat con IA sobre los documentos NASA</h3>
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="search-input-group">
+                        <input type="text" id="chatInput" placeholder="Pregunta algo sobre los documentos..." />
+                        <button onclick="enviarPregunta()">Enviar</button>
+                    </div>
+                </div>
+
+                <!-- AI Analysis -->
+                <div id="aiAnalysis" class="ai-analysis" style="display:none;">
+                    <strong>🤖 Análisis de IA:</strong>
+                    <p id="analysisText"></p>
+                </div>
+
+                <!-- Stats -->
+                <div id="stats" class="stats" style="display:none;">
+                    <strong id="statsText"></strong>
+                </div>
+
+                <!-- Results -->
+                <div id="results" class="results-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentProvider = 'claude';
+        let currentMode = 'ai_search';
+        
+        // Event Listeners
+        document.querySelectorAll('.ai-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.ai-option').forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+                currentProvider = this.dataset.provider;
+            });
+        });
+
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentMode = this.dataset.mode;
+                
+                // Toggle chat mode
+                if (currentMode === 'chat') {
+                    document.getElementById('chatMode').classList.add('active');
+                    document.getElementById('results').style.display = 'none';
+                } else {
+                    document.getElementById('chatMode').classList.remove('active');
+                    document.getElementById('results').style.display = 'grid';
+                }
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') ejecutarBusqueda();
+        });
+
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') enviarPregunta();
+        });
+
+        // Funciones principales
+        function ejecutarBusqueda() {
+            const query = document.getElementById('searchInput').value.trim();
+            
+            if (!query) {
+                alert('Por favor ingresa un término de búsqueda');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="loading">🤖 IA analizando tu consulta...</div>';
+            
+            document.getElementById('aiAnalysis').style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('action', currentMode);
+            formData.append('query', query);
+
+            fetch(`ai_search.php?ai_provider=${currentProvider}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    resultsDiv.innerHTML = `<div class="loading">⚠️ ${data.error}</div>`;
+                    return;
+                }
+
+                mostrarResultados(data);
+            })
+            .catch(error => {
+                resultsDiv.innerHTML = '<div class="loading">⚠️ Error en la búsqueda con IA</div>';
+                console.error(error);
+            });
+        }
+
+        function mostrarResultados(data) {
+            const resultsDiv = document.getElementById('results');
+            const statsDiv = document.getElementById('stats');
+            const statsText = document.getElementById('statsText');
+            const analysisDiv = document.getElementById('aiAnalysis');
+            const analysisText = document.getElementById('analysisText');
+
+            // Mostrar análisis de IA si existe
+            if (data.ai_analysis) {
+                analysisText.textContent = data.ai_analysis;
+                analysisDiv.style.display = 'block';
+            }
+
+            // Mostrar query mejorado si existe
+            if (data.improved_query && data.improved_query !== data.original_query) {
+                analysisText.innerHTML = `<strong>Query original:</strong> "${data.original_query}"<br>
+                                         <strong>Query mejorado por IA:</strong> "${data.improved_query}"<br><br>
+                                         ${data.ai_analysis || ''}`;
+                analysisDiv.style.display = 'block';
+            }
+
+            const resultados = data.results || [];
+
+            if (resultados.length === 0) {
+                resultsDiv.innerHTML = '<div class="loading">🔭 No se encontraron resultados</div>';
+                statsDiv.style.display = 'none';
+                return;
+            }
+
+            statsText.textContent = `📊 ${resultados.length} artículo${resultados.length > 1 ? 's' : ''} encontrado${resultados.length > 1 ? 's' : ''} con ${data.provider || currentProvider}`;
+            statsDiv.style.display = 'block';
+
+            resultsDiv.innerHTML = resultados.map(art => `
+                <div class="article-card">
+                    <div class="article-header">
+                        <div style="flex: 1;">
+                            <h2 class="article-title">${art.titulo}</h2>
+                            <div class="article-meta">
+                                👤 ${art.autor} | 📅 ${formatearFecha(art.fecha_publicacion)}
+                                ${art.categoria_nombre ? ' | 📂 ' + art.categoria_nombre : ''}
+                            </div>
+                        </div>
+                        ${art.ai_similarity ? `<div class="ai-score">🎯 ${art.ai_similarity}%</div>` : 
+                         `<div class="ai-score">⭐ ${art.relevancia_score}</div>`}
+                    </div>
+                    
+                    <p>${art.resumen}</p>
+                    
+                    ${art.keywords ? `
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px;">
+                            ${art.keywords.split(',').map(k => 
+                                `<span style="background: rgba(11, 61, 145, 0.5); padding: 5px 12px; border-radius: 15px; font-size: 0.85em;">#${k.trim()}</span>`
+                            ).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="article-actions">
+                        <button class="action-btn" onclick="verDocumento('${art.url_documento}')">📄 Ver documento</button>
+                        <button class="action-btn" onclick="generarResumen(${art.id})">📝 Resumen IA</button>
+                        <button class="action-btn" onclick="preguntarSobre(${art.id}, '${art.titulo.replace(/'/g, "\\'")}')">💬 Preguntar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function enviarPregunta() {
+            const pregunta = document.getElementById('chatInput').value.trim();
+            
+            if (!pregunta) return;
+
+            const messagesDiv = document.getElementById('chatMessages');
+            
+            // Agregar mensaje del usuario
+            messagesDiv.innerHTML += `
+                <div class="message user">
+                    <strong>Tú:</strong><br>${pregunta}
+                </div>
+            `;
+
+            // Mensaje de loading
+            messagesDiv.innerHTML += `
+                <div class="message ai" id="aiResponse">
+                    <strong>IA (${currentProvider}):</strong><br>
+                    Pensando...
+                </div>
+            `;
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            document.getElementById('chatInput').value = '';
+
+            const formData = new FormData();
+            formData.append('action', 'ai_question');
+            formData.append('question', pregunta); 
+
+            fetch(`ai_search.php?ai_provider=${currentProvider}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('aiResponse').innerHTML = `
+                    <strong>IA (${data.provider}):</strong><br>
+                    ${data.answer || 'Sin respuesta'}
+                    <br><small style="color: #888;">Consultó ${data.articles_consulted} artículos</small>
+                `;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            })
+            .catch(error => {
+                document.getElementById('aiResponse').innerHTML = `
+                    <strong>IA:</strong><br>
+                    ⚠️ Error al procesar la pregunta
+                `;
+            });
+        }
+
+        function generarResumen(articuloId) {
+            if (!confirm('¿Generar un resumen con IA de este artículo?')) return;
+
+            const formData = new FormData();
+            formData.append('action', 'generate_summary');
+            formData.append('article_id', articuloId);
+
+            alert('⏳ Generando resumen con IA...');
+
+            fetch(`ai_search.php?ai_provider=${currentProvider}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`📝 Resumen generado por ${data.provider}:\n\n${data.ai_summary}`);
+                } else {
+                    alert('⚠️ Error al generar resumen');
+                }
+            })
+            .catch(error => {
+                alert('⚠️ Error al generar resumen');
+            });
+        }
+
+        function preguntarSobre(articuloId, titulo) {
+            const pregunta = prompt(`💬 ¿Qué quieres saber sobre:\n"${titulo}"?`);
+            
+            if (!pregunta) return;
+
+            const formData = new FormData();
+            formData.append('action', 'ai_question');
+            formData.append('question', pregunta);
+            formData.append('article_id', articuloId);
+
+            alert('⏳ Consultando con IA...');
+
+            fetch(`ai_search.php?ai_provider=${currentProvider}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`🤖 Respuesta de ${data.provider}:\n\n${data.answer}`);
+                } else {
+                    alert('⚠️ Error al procesar pregunta');
+                }
+            })
+            .catch(error => {
+                alert('⚠️ Error al procesar pregunta');
+            });
+        }
+
+        function verDocumento(url) {
+            if (url && url !== 'null') {
+                window.open(url, '_blank');
+            } else {
+                alert('Documento no disponible en línea');
+            }
+        }
+
+        function formatearFecha(fecha) {
+            const d = new Date(fecha);
+            return d.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        // Cargar estadísticas al iniciar
+window.addEventListener('DOMContentLoaded', cargarEstadisticas);
+
+function cargarEstadisticas() {
+    fetch('backend/api/ai_search.php?action=get_stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarEstadisticas(data.stats);
+            }
+        })
+        .catch(error => console.error('Error cargando estadísticas:', error));
+}
+
+function mostrarEstadisticas(stats) {
+    const panel = document.getElementById('statsPanel');
+    panel.style.display = 'block';
+    
+    document.getElementById('totalArticulos').textContent = stats.total_articulos || 0;
+    
+    const flora = stats.por_categoria.find(c => c.nombre === 'Flora');
+    const fauna = stats.por_categoria.find(c => c.nombre === 'Fauna');
+    
+    document.getElementById('totalFlora').textContent = flora ? flora.total : 0;
+    document.getElementById('totalFauna').textContent = fauna ? fauna.total : 0;
+    document.getElementById('promedioRelevancia').textContent = stats.promedio_relevancia || 0;
+    
+    // Top autores
+    const topAutoresList = document.getElementById('topAutoresList');
+    topAutoresList.innerHTML = stats.top_autores.map((autor, index) => `
+        <div style="display: flex; justify-content: space-between; padding: 8px; background: rgba(255,255,255,0.05); margin-bottom: 8px; border-radius: 8px;">
+            <span>${index + 1}. ${autor.autor}</span>
+            <span style="color: #00ff88; font-weight: bold;">${autor.total} artículos</span>
+        </div>
+    `).join('');
+}
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+{
+  "welcome": "¡Bienvenido a NASA Bio Research!",
+  "search_placeholder": "🔍 Buscar investigaciones, autores, temas...",
+  "explore_title": "Explora el Universo Biológico",
+  "explore_desc": "Descubre investigaciones sobre flora y fauna espacial 🌌🔬",
+  
+  "nav": {
+    "about": "Acerca de",
+    "contact": "Información de Contacto",
+    "language": "Español",
+    "news": "Noticias",
+    "home": "Inicio",
+    "researchers": "Investigadores"
+  },
+  
+  "news": {
+    "title": "Noticias",
+    "body": "Nuestro equipo participa por primera vez en un hackathon. ¡Bienvenidos todos los miembros y mucha suerte en este gran reto! El equipo de BOTSITOSSS se une a su primer hackathon, listos para aprender y compartir.",
+    "latest": "Últimas Noticias",
+    "read_more": "Leer más"
+  },
+  
+  "sections": {
+    "most_visited": "Investigaciones Más Visitadas",
+    "most_recent": "Investigaciones Más Recientes",
+    "oldest": "Investigaciones Fundacionales",
+    "flora_title": "Flora Espacial",
+    "fauna_title": "Fauna Espacial",
+    "all_research": "Todas las Investigaciones",
+    "featured": "Destacadas"
+  },
+  
+  "access": {
+    "title": "Acceso Investigadores",
+    "body": "Para solicitar acceso como investigador, envía tu nombre, email institucional y área de investigación a santiagogabrielfloresruiz@gmail.com. El equipo revisará tu solicitud y te dará acceso si cumples los requisitos.",
+    "request": "Solicitar Acceso",
+    "login": "Iniciar Sesión",
+    "register": "Registrarse"
+  },
+  
+  "researchers": {
+    "title": "Investigadores y Empresas",
+    "subtitle": "Conoce a nuestro equipo",
+    "view_profile": "Ver Perfil",
+    "publications": "Publicaciones",
+    "projects": "Proyectos",
+    "contact": "Contactar"
+  },
+  
+  "research": {
+    "title": "Investigación",
+    "author": "Autor",
+    "date": "Fecha",
+    "category": "Categoría",
+    "tags": "Etiquetas",
+    "abstract": "Resumen",
+    "full_text": "Texto Completo",
+    "references": "Referencias",
+    "citations": "Citas",
+    "download": "Descargar",
+    "share": "Compartir",
+    "related": "Investigaciones Relacionadas",
+    "views": "Vistas",
+    "downloads": "Descargas"
+  },
+  
+  "filters": {
+    "filter_by": "Filtrar por",
+    "sort_by": "Ordenar por",
+    "category": "Categoría",
+    "date_range": "Rango de Fechas",
+    "author": "Autor",
+    "clear_filters": "Limpiar Filtros",
+    "apply": "Aplicar"
+  },
+  
+  "categories": {
+    "flora": "Flora",
+    "fauna": "Fauna",
+    "astrobiology": "Astrobiología",
+    "microbiology": "Microbiología",
+    "genetics": "Genética",
+    "ecology": "Ecología",
+    "all": "Todas"
+  },
+  
+  "buttons": {
+    "view_more": "Ver Más",
+    "load_more": "Cargar Más",
+    "back": "Volver",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "submit": "Enviar",
+    "search": "Buscar"
+  },
+  
+  "messages": {
+    "loading": "Cargando...",
+    "no_results": "No se encontraron resultados",
+    "error": "Ocurrió un error",
+    "success": "Operación exitosa",
+    "confirm_delete": "¿Estás seguro de que quieres eliminar esto?",
+    "saved": "Guardado correctamente",
+    "welcome_back": "Bienvenido de nuevo"
+  },
+  
+  "footer": {
+    "copyright": "© 2025 NASA Bio Research. Todos los derechos reservados.",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Uso",
+    "contact": "Contacto",
+    "social": "Síguenos"
+  },
+  
+  "forms": {
+    "name": "Nombre",
+    "email": "Correo Electrónico",
+    "institution": "Institución",
+    "research_area": "Área de Investigación",
+    "message": "Mensaje",
+    "required": "Campo requerido",
+    "invalid_email": "Correo electrónico inválido",
+    "send": "Enviar"
+  }
+}

@@ -1,0 +1,422 @@
+/* ============================================================
+   NASA BIOSCIENCE PLATFORM - AUTHENTICATION STYLES
+   ============================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0B3D91 0%, #1B5299 50%, #2E7DBF 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* ============================================================
+   CONTENEDOR PRINCIPAL
+   ============================================================ */
+.auth-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    max-width: 450px;
+    width: 100%;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.header {
+    background: linear-gradient(135deg, #0B3D91, #2E7DBF);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.nasa-logo {
+    font-size: 3em;
+    margin-bottom: 15px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.header h1 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.header .subtitle {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+.tabs {
+    display: flex;
+    background: #f5f5f5;
+}
+
+.tab {
+    flex: 1;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-size: 1em;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tab:hover {
+    background: #e9ecef;
+}
+
+.tab.active {
+    background: white;
+    color: #0B3D91;
+}
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #FC3D21;
+}
+
+/* ============================================================
+   FORMULARIOS
+   ============================================================ */
+.form-container {
+    padding: 30px;
+}
+
+.form-section {
+    display: none;
+}
+
+.form-section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #0B3D91;
+    box-shadow: 0 0 0 3px rgba(11, 61, 145, 0.1);
+}
+
+input::placeholder {
+    color: #999;
+}
+
+/* ============================================================
+   BOTÓN SUBMIT
+   ============================================================ */
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #FC3D21, #FF6B4A);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(252, 61, 33, 0.3);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ============================================================
+   ALERTAS
+   ============================================================ */
+.alert {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: none;
+    font-size: 0.9em;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.alert.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* ============================================================
+   SELECTOR DE ROL
+   ============================================================ */
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.role-option {
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.role-option:hover {
+    border-color: #0B3D91;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.role-option.selected {
+    border-color: #0B3D91;
+    background: #f0f7ff;
+    box-shadow: 0 3px 10px rgba(11, 61, 145, 0.2);
+}
+
+.role-option input[type="radio"] {
+    display: none;
+}
+
+.role-icon {
+    font-size: 2em;
+    margin-bottom: 5px;
+}
+
+.role-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 3px;
+    font-size: 0.95em;
+}
+
+.role-desc {
+    font-size: 0.8em;
+    color: #666;
+}
+
+/* ============================================================
+   HINT/AYUDA
+   ============================================================ */
+.hint {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* ============================================================
+   LOADING SPINNER
+   ============================================================ */
+.loading {
+    display: none;
+    text-align: center;
+    padding: 10px;
+}
+
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #0B3D91;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   ENLACES ADICIONALES
+   ============================================================ */
+.extra-links {
+    text-align: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.extra-links a {
+    color: #0B3D91;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.3s ease;
+}
+
+.extra-links a:hover {
+    color: #FC3D21;
+    text-decoration: underline;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 480px) {
+    .auth-container {
+        border-radius: 15px;
+    }
+    
+    .header {
+        padding: 30px 20px;
+    }
+    
+    .header h1 {
+        font-size: 1.5em;
+    }
+    
+    .nasa-logo {
+        font-size: 2.5em;
+    }
+    
+    .form-container {
+        padding: 20px;
+    }
+    
+    .role-selector {
+        grid-template-columns: 1fr;
+    }
+    
+    .tab {
+        padding: 12px;
+        font-size: 0.9em;
+    }
+}
+
+/* ============================================================
+   ACCESIBILIDAD
+   ============================================================ */
+*:focus-visible {
+    outline: 2px solid #0B3D91;
+    outline-offset: 2px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}

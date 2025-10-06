@@ -1,0 +1,39 @@
+[04-Oct-2025 21:13:27 America/Mexico_City] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /var/www/html/backend/auth_middleware.php on line 3
+[04-Oct-2025 21:13:27 America/Mexico_City] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /var/www/html/backend/auth_middleware.php on line 3
+[04-Oct-2025 21:16:42 America/Mexico_City] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /var/www/html/backend/auth_middleware.php on line 3
+[05-Oct-2025 11:44:33 America/Mexico_City] PHP Warning:  Undefined array key "afiliacion" in /var/www/html/backend/auth.php on line 121
+[05-Oct-2025 11:44:33 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 123
+[05-Oct-2025 11:44:33 America/Mexico_City] PHP Warning:  Undefined array key "afiliacion" in /var/www/html/backend/auth.php on line 146
+[05-Oct-2025 11:44:33 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 148
+[05-Oct-2025 11:44:38 America/Mexico_City] PHP Warning:  Undefined array key "afiliacion" in /var/www/html/backend/auth.php on line 121
+[05-Oct-2025 11:44:38 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 123
+[05-Oct-2025 11:44:38 America/Mexico_City] PHP Warning:  Undefined array key "afiliacion" in /var/www/html/backend/auth.php on line 146
+[05-Oct-2025 11:44:38 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 148
+[05-Oct-2025 11:45:21 America/Mexico_City] PHP Warning:  Undefined array key "afiliacion" in /var/www/html/backend/auth.php on line 121
+[05-Oct-2025 11:45:21 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 123
+[05-Oct-2025 11:45:21 America/Mexico_City] PHP Warning:  Undefined array key "afiliacion" in /var/www/html/backend/auth.php on line 146
+[05-Oct-2025 11:45:21 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 148
+[05-Oct-2025 11:46:19 America/Mexico_City] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'u.fecha_creacion' in 'field list' in /var/www/html/backend/auth.php:184
+Stack trace:
+#0 /var/www/html/backend/auth.php(184): mysqli->prepare('\n        SELECT...')
+#1 /var/www/html/backend/auth.php(305): AuthSystem->verificarSesion()
+#2 {main}
+  thrown in /var/www/html/backend/auth.php on line 184
+[05-Oct-2025 11:46:24 America/Mexico_City] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'u.fecha_creacion' in 'field list' in /var/www/html/backend/auth.php:184
+Stack trace:
+#0 /var/www/html/backend/auth.php(184): mysqli->prepare('\n        SELECT...')
+#1 /var/www/html/backend/auth.php(305): AuthSystem->verificarSesion()
+#2 {main}
+  thrown in /var/www/html/backend/auth.php on line 184
+[05-Oct-2025 12:01:59 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 124
+[05-Oct-2025 12:01:59 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 149
+[05-Oct-2025 12:02:16 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 124
+[05-Oct-2025 12:02:16 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 149
+[05-Oct-2025 12:02:49 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 124
+[05-Oct-2025 12:02:49 America/Mexico_City] PHP Warning:  Undefined array key "fecha_creacion" in /var/www/html/backend/auth.php on line 149
+[05-Oct-2025 12:05:37 America/Mexico_City] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'u.fecha_creacion' in 'field list' in /var/www/html/backend/auth.php:186
+Stack trace:
+#0 /var/www/html/backend/auth.php(186): mysqli->prepare('\n            SE...')
+#1 /var/www/html/backend/auth.php(307): AuthSystem->verificarSesion()
+#2 {main}
+  thrown in /var/www/html/backend/auth.php on line 186
