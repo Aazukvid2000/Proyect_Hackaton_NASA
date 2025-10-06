@@ -1,0 +1,1350 @@
+# 🚀 NASA Bio Research Platform
+
+> Plataforma web para investigación biológica espacial con búsqueda inteligente por IA desarrollada por el equipo **BOTSITOSSS** para un hackathon.
+
+![NASA](https://img.shields.io/badge/NASA-Research-0B3D91?style=for-the-badge)
+![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker)
+
+---
+
+## 📋 Tabla de Contenidos
+
+- [Descripción General](#-descripción-general)
+- [Características Principales](#-características-principales)
+- [Arquitectura del Proyecto](#-arquitectura-del-proyecto)
+- [Base de Datos](#-base-de-datos)
+- [Sistema de Autenticación](#-sistema-de-autenticación)
+- [Búsqueda con IA](#-búsqueda-con-ia)
+- [Internacionalización (i18n)](#-internacionalización-i18n)
+- [Instalación](#-instalación)
+- [Uso](#-uso)
+- [Estructura de Archivos](#-estructura-de-archivos)
+- [APIs Disponibles](#-apis-disponibles)
+- [Equipo](#-equipo)
+
+---
+
+## 🌌 Descripción General
+
+**NASA Bio Research Platform** es una plataforma web moderna diseñada para centralizar y facilitar el acceso a investigaciones científicas sobre **flora y fauna en el espacio**. Desarrollada con tecnologías web estándar (HTML, CSS, JavaScript, PHP) y potenciada por **inteligencia artificial Claude de Anthropic**, permite:
+
+- 🔍 **Búsqueda inteligente** de artículos científicos con análisis semántico
+- 👥 **Sistema de usuarios** con roles (lector, investigador, administrador)
+- 📝 **Publicación de investigaciones** por parte de investigadores
+- 🌐 **Interfaz multiidioma** (Español/English)
+- 🤖 **Chat con IA** para preguntas sobre los documentos
+
+---
+
+## ✨ Características Principales
+
+### 🔐 Sistema de Autenticación
+- **3 niveles de usuario**: Lector, Investigador, Administrador
+- **Registro con aprobación manual** para investigadores
+- **Sesiones seguras** con bcrypt para contraseñas
+- **Perfiles de usuario** con estadísticas personalizadas
+
+### 🧠 Búsqueda con IA (Claude)
+- **Mejora automática de consultas** usando procesamiento de lenguaje natural
+- **Búsqueda semántica** que entiende el contexto
+- **Chat interactivo** para preguntar sobre documentos
+- **Generación de resúmenes** científicos automáticos
+- **Análisis de relevancia** de resultados
+
+### 📚 Base de Datos Científica
+- **30 artículos precargados** (15 Flora + 15 Fauna)
+- **Categorización** por Flora/Fauna
+- **Metadatos completos**: autor, fecha, institución, keywords
+- **Enlaces a NASA OSDR** (Open Science Data Repository)
+
+### 🌐 Internacionalización
+- **Soporte completo** para Español e Inglés
+- **Traducción dinámica** sin recargar página
+- **Sistema i18n modular** fácilmente extensible
+
+### 📊 Panel de Administración
+- **Gestión de usuarios** y solicitudes pendientes
+- **Estadísticas en tiempo real**
+- **Aprobación/rechazo** de nuevos investigadores
+
+---
+
+## 🏗️ Arquitectura del Proyecto
+
+```
+┌─────────────────────────────────────┐
+│         FRONTEND (HTML/CSS/JS)      │
+│  - index.html (Página principal)    │
+│  - login.html (Autenticación)       │
+│  - perfil.html (Perfil usuario)     │
+│  - ai_dashboard.html (Panel IA)     │
+│  - admin.html (Administración)      │
+└──────────────┬──────────────────────┘
+               │
+               │ API REST (JSON)
+               │
+┌──────────────▼──────────────────────┐
+│         BACKEND (PHP 8.2)           │
+│  - auth.php (Autenticación)         │
+│  - ai_search.php (Búsqueda IA)      │
+│  - search_api.php (Búsqueda normal) │
+│  - config.php (Configuración)       │
+│  - publicaciones.php (CRUD docs)    │
+└──────────────┬──────────────────────┘
+               │
+               │ MySQLi/PDO
+               │
+┌──────────────▼──────────────────────┐
+│       BASE DE DATOS (MySQL 8.0)     │
+│  - usuarios (auth + perfiles)       │
+│  - articulos (documentos)           │
+│  - categorias (Flora/Fauna)         │
+│  - keywords (etiquetas)             │
+│  - roles (permisos)                 │
+└─────────────────────────────────────┘
+```
+
+### Componentes Externos
+- **Claude API (Anthropic)**: Búsqueda inteligente y chat
+- **Docker**: Contenedorización completa (MySQL + PHP + phpMyAdmin)
+
+---
+
+## 🗄️ Base de Datos
+
+### Esquema Principal
+
+#### Tabla `usuarios`
+```sql
+id INT PRIMARY KEY AUTO_INCREMENT
+nombre_completo VARCHAR(255) NOT NULL
+email VARCHAR(255) UNIQUE NOT NULL
+password_hash VARCHAR(255) -- bcrypt
+institucion VARCHAR(255)
+afiliacion VARCHAR(255)
+foto_perfil VARCHAR(500)
+rol_id INT -- FK a roles
+estado ENUM('activo','pendiente','inactivo')
+created_at TIMESTAMP
+ultimo_acceso TIMESTAMP
+```
+
+#### Tabla `articulos`
+```sql
+id INT PRIMARY KEY AUTO_INCREMENT
+titulo VARCHAR(255) NOT NULL
+autor VARCHAR(255)
+resumen TEXT
+contenido TEXT
+url_documento VARCHAR(500) -- Enlace a NASA OSDR
+fecha_publicacion DATE
+categoria_id INT -- FK (1=Flora, 2=Fauna)
+relevancia_score DECIMAL(3,1)
+vistas INT DEFAULT 0
+created_at TIMESTAMP
+```
+
+#### Tabla `roles`
+```sql
+id INT PRIMARY KEY
+nombre VARCHAR(50) -- 'lector', 'investigador', 'admin'
+descripcion TEXT
+```
+
+#### Tabla `categorias`
+```sql
+id INT PRIMARY KEY
+nombre VARCHAR(100) -- 'Flora' o 'Fauna'
+descripcion TEXT
+```
+
+#### Tabla `keywords`
+```sql
+id INT PRIMARY KEY
+palabra VARCHAR(100) UNIQUE
+```
+
+#### Tabla `articulo_keywords` (relación N:N)
+```sql
+articulo_id INT -- FK a articulos
+keyword_id INT -- FK a keywords
+PRIMARY KEY (articulo_id, keyword_id)
+```
+
+### Datos Precargados
+
+El archivo `init_nasa.sql` incluye:
+- ✅ **15 estudios de Flora**: Arabidopsis, Lechuga, Girasol, Trigo, Tomate, Zinnia, etc.
+- ✅ **15 estudios de Fauna**: Drosophila, C. elegans, Ratones, Pez cebra, Tardígrados, etc.
+- ✅ **60+ keywords** relacionadas con biología espacial
+- ✅ **Usuario admin** predeterminado (`admin@nasa.gov` / `admin123`)
+
+---
+
+## 🔐 Sistema de Autenticación
+
+### Archivo Principal: `backend/auth.php`
+
+#### Funciones Disponibles
+
+| Acción | Método | Parámetros | Respuesta |
+|--------|--------|------------|-----------|
+| `registrar` | POST | nombre_completo, email, password, institucion, afiliacion, rol | `{success, message, usuario_id}` |
+| `login` | POST | email, password | `{success, message, redirect, usuario}` |
+| `logout` | POST | - | `{success, message}` |
+| `verificar` | GET | - | `{success, usuario}` |
+
+### Flujo de Registro
+
+1. **Usuario llena formulario** en `login.html`
+2. **Validación frontend** (emails, contraseñas coinciden)
+3. **POST a `/backend/auth.php?action=registrar`**
+4. **Backend valida y crea usuario**:
+   - Rol `investigador` → estado `pendiente` (requiere aprobación)
+   - Rol `lector` → estado `activo` (acceso inmediato)
+5. **Hash bcrypt** de contraseña almacenado
+6. **Respuesta JSON** con éxito/error
+
+### Flujo de Login
+
+1. **Usuario ingresa email/contraseña**
+2. **POST a `/backend/auth.php?action=login`**
+3. **Verificación**:
+   - ¿Email existe?
+   - ¿Contraseña correcta? (`password_verify()`)
+   - ¿Estado activo?
+4. **Creación de sesión PHP** con datos del usuario
+5. **Redirección según rol**:
+   - `admin` → `/dashboard/admin.html`
+   - `investigador` → `/index.html`
+   - `lector` → `/index.html`
+
+### Protección de Rutas
+
+```php
+// En archivos protegidos
+require_once 'config.php';
+
+if (!isAuthenticated()) {
+    http_response_code(401);
+    echo json_encode(['error' => 'No autorizado']);
+    exit;
+}
+
+if (!isAdmin()) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Acceso denegado']);
+    exit;
+}
+```
+
+---
+
+## 🤖 Búsqueda con IA
+
+### Archivo Principal: `dashboard/ai_search.php`
+
+#### Integración con Claude API
+
+```php
+define('CLAUDE_API_KEY', 'sk-ant-api03-...');
+
+function llamarClaude($prompt) {
+    $data = [
+        'model' => 'claude-3-haiku-20240307',
+        'max_tokens' => 1024,
+        'messages' => [
+            ['role' => 'user', 'content' => $prompt]
+        ]
+    ];
+    
+    // cURL a api.anthropic.com/v1/messages
+    // Retorna respuesta de IA
+}
+```
+
+### Modos de Búsqueda
+
+#### 1️⃣ **Búsqueda Inteligente** (`ai_search`)
+- Usuario ingresa: *"¿Cómo afecta la microgravedad a las plantas?"*
+- **Claude mejora** la consulta: *"microgravedad plantas arabidopsis crecimiento desarrollo raíces gravitropismo"*
+- **Búsqueda en BD** con términos expandidos
+- **Claude analiza** resultados y genera insights científicos
+
+#### 2️⃣ **Búsqueda Semántica** (`semantic_search`)
+- Busca por **significado** en lugar de coincidencia exacta
+- Identifica documentos relacionados aunque no contengan las palabras exactas
+
+#### 3️⃣ **Chat con IA** (`ai_question`)
+- Usuario pregunta: *"¿Qué sabemos sobre reproducción en el espacio?"*
+- **Claude consulta** artículos relevantes de la BD
+- **Genera respuesta** basada EXCLUSIVAMENTE en los documentos
+
+#### 4️⃣ **Generación de Resúmenes** (`generate_summary`)
+- Toma un artículo completo
+- **Claude genera** resumen técnico conciso (120 palabras)
+
+### Endpoints Disponibles
+
+```javascript
+// Búsqueda inteligente
+POST /dashboard/ai_search.php?action=ai_search
+Body: { query: "efectos microgravedad" }
+
+// Chat
+POST /dashboard/ai_search.php?action=ai_question
+Body: { question: "¿Qué estudios hay de ratones?" }
+
+// Resumen
+POST /dashboard/ai_search.php?action=generate_summary
+Body: { article_id: 5 }
+
+// Estadísticas
+GET /dashboard/ai_search.php?action=get_stats
+```
+
+### Dashboard de IA: `ai_dashboard.html`
+
+Interfaz visual para:
+- ✅ Seleccionar proveedor de IA (Claude, ChatGPT, Gemini)
+- ✅ Elegir modo de búsqueda
+- ✅ Ver análisis de IA en tiempo real
+- ✅ Chat interactivo con documentos
+- ✅ Estadísticas de la base de datos
+
+---
+
+## 🌐 Internacionalización (i18n)
+
+### Archivos del Sistema
+
+1. **`locales/es.json`** - Traducciones en español
+2. **`locales/en.json`** - Traducciones en inglés
+3. **`js/i18n.js`** - Sistema de traducción
+
+### Estructura de Traducciones
+
+```json
+{
+  "welcome": "¡Bienvenido a NASA Bio Research!",
+  "nav": {
+    "about": "Acerca de",
+    "contact": "Información de Contacto"
+  },
+  "buttons": {
+    "view_more": "Ver Más",
+    "save": "Guardar"
+  }
+}
+```
+
+### Uso en HTML
+
+```html
+<!-- Texto simple -->
+<h1 data-i18n="welcome">Welcome to NASA Bio Research!</h1>
+
+<!-- Texto anidado -->
+<button data-i18n="nav.about">About Us</button>
+
+<!-- Placeholder -->
+<input data-i18n-placeholder="search_placeholder" 
+       placeholder="Search...">
+
+<!-- Título (tooltip) -->
+<button data-i18n-title="buttons.save" title="Save">💾</button>
+```
+
+### Uso en JavaScript
+
+```javascript
+// Obtener traducción
+const texto = i18n.t('welcome');
+const boton = i18n.t('buttons.save');
+
+// Cambiar idioma
+i18n.setLanguage('es'); // Español
+i18n.setLanguage('en'); // English
+
+// Suscribirse a cambios
+i18n.subscribe((nuevoIdioma) => {
+    console.log('Idioma cambiado a:', nuevoIdioma);
+    // Re-renderizar contenido dinámico
+});
+```
+
+### Sistema Embebido en `index.html`
+
+El archivo `index.html` incluye un sistema i18n simplificado embebido en JavaScript para funcionar sin dependencias externas:
+
+```javascript
+window.locales = {
+    "en": { /* traducciones inglés */ },
+    "es": { /* traducciones español */ }
+};
+
+function applyLocale(lang) { /* ... */ }
+function toggleLanguage() { /* ... */ }
+```
+
+---
+
+## 📦 Instalación
+
+### Requisitos Previos
+
+- **Docker** y **Docker Compose**
+- Puerto **8081** (webserver) libre
+- Puerto **3307** (MySQL) libre
+- Puerto **8080** (phpMyAdmin) libre
+
+### Instalación con Docker (Recomendado)
+
+```bash
+# 1. Clonar repositorio
+git clone <tu-repo>
+cd nasa-bio-research
+
+# 2. Iniciar contenedores
+docker-compose up -d
+
+# 3. Esperar a que MySQL esté listo (aprox. 30 segundos)
+docker-compose logs -f mysql
+
+# 4. La base de datos se inicializa automáticamente con init_nasa.sql
+```
+
+### Accesos
+
+| Servicio | URL | Usuario | Contraseña |
+|----------|-----|---------|------------|
+| **Aplicación Web** | http://localhost:8081 | - | - |
+| **phpMyAdmin** | http://localhost:8080 | root | nasahack2024 |
+| **MySQL** | localhost:3307 | nasauser | nasapass123 |
+
+### Usuario Administrador Predeterminado
+
+```
+Email: admin@nasa.gov
+Contraseña: admin123
+```
+
+**⚠️ CAMBIAR INMEDIATAMENTE en producción**
+
+---
+
+## 🚀 Uso
+
+### Para Usuarios Lectores
+
+1. **Navegar** a http://localhost:8081
+2. **Buscar** artículos sin necesidad de login
+3. **Crear cuenta** (opcional) para guardar preferencias
+
+### Para Investigadores
+
+1. **Solicitar acceso** en `login.html` → pestaña "Solicitar Acceso"
+2. **Esperar aprobación** del administrador
+3. **Iniciar sesión** una vez aprobado
+4. **Publicar investigaciones** con el botón flotante "Publica tu Investigación"
+5. **Ver perfil** con estadísticas personales en `perfil.html`
+
+### Para Administradores
+
+1. **Login** con cuenta admin
+2. **Acceso automático** al panel `admin.html`
+3. **Gestionar solicitudes** pendientes
+4. **Aprobar/Rechazar** nuevos investigadores
+5. **Ver estadísticas** globales
+
+### Búsqueda con IA
+
+1. **Navegar** a `ai_dashboard.html` (requiere login)
+2. **Seleccionar proveedor** de IA (Claude recomendado)
+3. **Elegir modo** de búsqueda:
+   - 🧠 Búsqueda Inteligente
+   - 🎯 Búsqueda Semántica
+   - 💬 Chat con IA
+4. **Ingresar consulta** en lenguaje natural
+5. **Ver análisis** de IA y resultados
+
+---
+
+## 📁 Estructura de Archivos
+
+```
+nasa-bio-research/
+│
+├── index.html                    # Página principal
+├── login.html                    # Login/Registro
+├── perfil.html                   # Perfil de usuario
+├── docker-compose.yml            # Configuración Docker
+├── init_nasa.sql                 # Datos iniciales BD
+│
+├── backend/
+│   ├── config.php                # Configuración DB + helpers
+│   ├── auth.php                  # Sistema de autenticación
+│   ├── auth_middleware.php       # Protección de rutas
+│   │
+│   └── api/
+│       ├── search_api.php        # Búsqueda normal
+│       ├── ai_search.php         # Búsqueda con IA
+│       ├── publicaciones.php     # CRUD artículos
+│       └── admin_users.php       # Gestión usuarios
+│
+├── dashboard/
+│   ├── ai_dashboard.html         # Panel de IA
+│   ├── admin.html                # Panel administrador
+│   └── ai_search.php             # (duplicado backend/)
+│
+├── locales/
+│   ├── es.json                   # Traducciones español
+│   └── en.json                   # Traducciones inglés
+│
+├── js/
+│   └── i18n.js                   # Sistema i18n
+│
+├── uploads/
+│   └── publicaciones/            # Documentos subidos
+│
+└── logs/
+    ├── php-errors.log            # Errores PHP
+    └── activity.log              # Actividad usuarios
+```
+
+---
+
+## 🔌 APIs Disponibles
+
+### 🔐 Autenticación (`/backend/auth.php`)
+
+#### Registrar Usuario
+```http
+POST /backend/auth.php?action=registrar
+Content-Type: application/x-www-form-urlencoded
+
+nombre_completo=Dr.+Juan+Perez
+&email=juan@universidad.edu
+&password=securepass123
+&password_confirm=securepass123
+&institucion=Universidad+Nacional
+&afiliacion=Profesor+Investigador
+&rol=investigador
+```
+
+**Respuesta:**
+```json
+{
+  "success": true,
+  "message": "Registro exitoso. Tu cuenta está pendiente de aprobación.",
+  "usuario_id": 5,
+  "requiere_aprobacion": true
+}
+```
+
+#### Iniciar Sesión
+```http
+POST /backend/auth.php?action=login
+Content-Type: application/x-www-form-urlencoded
+
+email=admin@nasa.gov
+&password=admin123
+```
+
+**Respuesta:**
+```json
+{
+  "success": true,
+  "message": "Inicio de sesión exitoso",
+  "redirect": "/dashboard/admin.html",
+  "usuario": {
+    "id": 1,
+    "nombre": "Administrador",
+    "email": "admin@nasa.gov",
+    "rol": "admin",
+    "estado": "activo"
+  }
+}
+```
+
+#### Verificar Sesión
+```http
+GET /backend/auth.php?action=verificar
+```
+
+**Respuesta:**
+```json
+{
+  "success": true,
+  "usuario": {
+    "id": 1,
+    "nombre": "Administrador",
+    "email": "admin@nasa.gov",
+    "rol": "admin",
+    "foto_perfil": null
+  }
+}
+```
+
+---
+
+### 🔍 Búsqueda Normal (`/backend/api/search_api.php`)
+
+#### Buscar Artículos
+```http
+GET /backend/api/search_api.php?action=search&q=arabidopsis&orden=relevancia
+```
+
+**Respuesta:**
+```json
+[
+  {
+    "id": 1,
+    "titulo": "Arabidopsis (modelo) - Arabidopsis thaliana",
+    "autor": "Anna-Lisa Paul; Robert J. Ferl",
+    "resumen": "Planta modelo de la familia Brassicaceae...",
+    "fecha_publicacion": "2020-01-01",
+    "categoria_nombre": "Flora",
+    "keywords": "arabidopsis, transcriptómica, microgravedad",
+    "relevancia_score": 9.5,
+    "vistas": 156
+  }
+]
+```
+
+#### Obtener Todos los Artículos
+```http
+GET /backend/api/search_api.php?action=all
+```
+
+---
+
+### 🤖 Búsqueda con IA (`/dashboard/ai_search.php`)
+
+#### Búsqueda Inteligente
+```http
+POST /dashboard/ai_search.php?action=ai_search&ai_provider=claude
+Content-Type: multipart/form-data
+
+query=¿Qué efectos tiene la microgravedad en plantas?
+```
+
+**Respuesta:**
+```json
+{
+  "success": true,
+  "original_query": "¿Qué efectos tiene la microgravedad en plantas?",
+  "improved_query": "microgravedad plantas desarrollo crecimiento arabidopsis gravitropismo raíces",
+  "ai_analysis": "Los resultados muestran investigaciones clave sobre...",
+  "provider": "claude",
+  "results": [
+    { "id": 1, "titulo": "...", "..." }
+  ],
+  "total": 8
+}
+```
+
+#### Chat con Documentos
+```http
+POST /dashboard/ai_search.php?action=ai_question
+Content-Type: multipart/form-data
+
+question=¿Qué sabemos sobre reproducción animal en el espacio?
+```
+
+**Respuesta:**
+```json
+{
+  "success": true,
+  "question": "¿Qué sabemos sobre reproducción animal en el espacio?",
+  "answer": "Según los documentos consultados, los estudios con C. elegans...",
+  "provider": "claude",
+  "articles_consulted": 3
+}
+```
+
+#### Generar Resumen
+```http
+POST /dashboard/ai_search.php?action=generate_summary
+Content-Type: multipart/form-data
+
+article_id=5
+```
+
+**Respuesta:**
+```json
+{
+  "success": true,
+  "article_id": "5",
+  "ai_summary": "Estudio pionero que analiza cambios epigenéticos...",
+  "provider": "claude"
+}
+```
+
+---
+
+### 📊 Estadísticas (`/dashboard/ai_search.php?action=get_stats`)
+
+```http
+GET /dashboard/ai_search.php?action=get_stats
+```
+
+**Respuesta:**
+```json
+{
+  "success": true,
+  "stats": {
+    "total_articulos": 30,
+    "por_categoria": [
+      { "nombre": "Flora", "total": 15 },
+      { "nombre": "Fauna", "total": 15 }
+    ],
+    "por_anio": [
+      { "anio": "2022", "total": 5 },
+      { "anio": "2021", "total": 8 }
+    ],
+    "top_autores": [
+      { "autor": "Paul; Ferl", "total": 4 },
+      { "autor": "Massa; Stutte", "total": 3 }
+    ],
+    "promedio_relevancia": 8.7
+  }
+}
+```
+
+---
+
+### 👥 Gestión de Usuarios - Admin (`/backend/api/admin_users.php`)
+
+#### Obtener Usuarios Pendientes
+```http
+GET /backend/api/admin_users.php?action=get_pending
+```
+
+#### Aprobar Usuario
+```http
+POST /backend/api/admin_users.php?action=approve
+Content-Type: multipart/form-data
+
+user_id=5
+```
+
+#### Rechazar Usuario
+```http
+POST /backend/api/admin_users.php?action=reject
+Content-Type: multipart/form-data
+
+user_id=6
+```
+
+---
+
+## 👥 Equipo
+
+**BOTSITOSSS** - Equipo de desarrollo del hackathon
+
+> "Somos 3 amigos estudiantes de la UTM que quisimos probar nuestras habilidades y ver de qué éramos capaces. Fue una experiencia muy grata y satisfactoria."
+
+### Contacto
+
+📧 Email: santiagogabrielfloresruiz@gmail.com
+
+---
+
+## 📝 Notas Técnicas
+
+### Seguridad
+
+- ✅ **Contraseñas hasheadas** con bcrypt (cost 10)
+- ✅ **Sesiones PHP** con `httponly` cookies
+- ✅ **Validación** de inputs en frontend y backend
+- ✅ **Prepared statements** para prevenir SQL injection
+- ✅ **Sanitización** de datos con `real_escape_string` y `htmlspecialchars`
+
+### Optimizaciones
+
+- ✅ **Índices en BD** para email, rol_id, categoria_id
+- ✅ **Búsqueda FULLTEXT** para mejor rendimiento
+- ✅ **Lazy loading** de imágenes
+- ✅ **Caché de traducciones** en localStorage
+- ✅ **Conexión persistente** a BD con PDO
+
+### Limitaciones Conocidas
+
+- ⚠️ **API de Claude** requiere key válida (incluida en código)
+- ⚠️ **Subida de archivos** no implementada completamente
+- ⚠️ **Paginación** limitada a 50 resultados máximo
+- ⚠️ **i18n en ai_dashboard.html** no implementado
+
+---
+
+## 🐛 Troubleshooting
+
+### Error: "No se puede conectar a la base de datos"
+
+**Solución:**
+```bash
+# Verificar que MySQL esté corriendo
+docker-compose ps
+
+# Ver logs de MySQL
+docker-compose logs mysql
+
+# Reiniciar contenedores
+docker-compose restart
+```
+
+### Error: "Call to undefined function password_verify()"
+
+**Solución:** Asegúrate de usar PHP 8.2+
+```bash
+docker-compose down
+docker-compose up -d --build
+```
+
+### Error: "CORS blocked"
+
+**Solución:** Los headers ya están configurados en todos los archivos PHP:
+```php
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+```
+
+### Claude API no responde
+
+**Solución:**
+1. Verificar que la API key sea válida
+2. Comprobar conexión a internet
+3. Ver logs en consola del navegador
+
+---
+
+## 📄 Licencia
+
+Este proyecto fue desarrollado para fines educativos durante un hackathon.
+
+---
+
+## 🎯 Roadmap Futuro
+
+- [ ] Implementar subida de archivos PDF
+- [ ] Agregar más proveedores de IA (OpenAI, Gemini)
+- [ ] Sistema de notificaciones por email
+- [ ] Gráficas de estadísticas con Chart.js
+- [ ] Exportación de resultados a CSV
+- [ ] Modo oscuro/claro
+- [ ] PWA (Progressive Web App)
+- [ ] Tests unitarios
+
+---
+
+## 📜 Archivos Adicionales del Sistema
+
+### Frontend Scripts
+
+#### `js/dashboard.js`
+Script principal que maneja:
+- **Carga de publicaciones** desde el backend
+- **Búsqueda con IA** integrada
+- **Filtros y ordenamiento** de resultados
+- **Visualización de modales** con detalles
+- **Sistema de descargas** de documentos
+
+**Funciones principales:**
+```javascript
+loadInitialPublications()    // Cargar datos al inicio
+performAISearch(query)        // Búsqueda con Claude
+displaySearchResults(results) // Mostrar resultados
+viewPublication(id)           // Modal de detalles
+filterByCategory(category)    // Filtrar por Flora/Fauna
+```
+
+#### `js/auth-check.js`
+Verificación de sesión y actualización de UI según rol:
+```javascript
+verificarSesion()                    // Verifica si hay sesión activa
+mostrarOpcionesAutenticado(usuario)  // UI para usuarios logueados
+mostrarOpcionesNoAutenticado()       // UI para visitantes
+```
+
+#### `js/auth.js`
+Manejo completo de autenticación:
+- **Login** con validación
+- **Registro** con verificación de contraseñas
+- **Validación en tiempo real** de campos
+- **Selector de roles** (lector/investigador)
+- **Gestión de alertas** de éxito/error
+
+**Funciones clave:**
+```javascript
+handleLogin(event)      // Procesar login
+handleRegister(event)   // Procesar registro
+isValidEmail(email)     // Validar formato email
+showAlert(type, msg)    // Mostrar alertas
+```
+
+### Backend APIs Adicionales
+
+#### `backend/api/search.php`
+API de búsqueda estándar (sin IA):
+
+**Parámetros soportados:**
+- `query` - Término de búsqueda
+- `category` - Flora o Fauna
+- `year` - Año de publicación
+- `author` - Nombre del autor
+- `sort` - Ordenamiento (relevance/alphabetical/year/author)
+
+**Respuesta:**
+```json
+{
+  "success": true,
+  "count": 15,
+  "results": [...]
+}
+```
+
+#### `backend/api/publicaciones.php`
+CRUD completo de artículos para investigadores:
+
+**Acciones disponibles:**
+
+| Acción | Método | Descripción | Requiere Auth |
+|--------|--------|-------------|---------------|
+| `publicar` | POST | Crear nuevo artículo | ✅ Investigador |
+| `mis_publicaciones` | GET | Ver artículos propios | ✅ Investigador |
+| `editar` | POST | Modificar artículo | ✅ Autor/Admin |
+| `eliminar` | POST | Borrar artículo | ✅ Autor/Admin |
+
+**Validaciones:**
+- Título ≤ 255 caracteres
+- Resumen y contenido obligatorios
+- Categoría válida (1=Flora, 2=Fauna)
+- URL ≤ 500 caracteres
+
+#### `backend/api/admin_users.php`
+Gestión de usuarios para administradores:
+
+**Endpoints:**
+```http
+GET  /admin_users.php?action=get_pending  # Usuarios pendientes
+GET  /admin_users.php?action=get_all      # Todos los usuarios
+POST /admin_users.php?action=approve      # Aprobar usuario
+POST /admin_users.php?action=reject       # Rechazar/eliminar
+```
+
+### Hojas de Estilo
+
+#### `css/dashboard.css`
+Estilos completos del dashboard:
+- **Variables CSS** para tema consistente
+- **Animaciones** (twinkle, float, fadeIn)
+- **Navbar** fija con blur backdrop
+- **Cards responsivos** con hover effects
+- **Modal** overlay con blur
+- **Scrollbars** personalizados
+- **Media queries** para móviles
+
+**Variables de color:**
+```css
+--purple-dark: #2a3f5a;
+--purple-main: #3E5F8A;
+--green-main: #2e7d32;
+--green-light: #4caf50;
+```
+
+#### `css/auth.css`
+Estilos del sistema de autenticación:
+- **Diseño centrado** con gradiente NASA
+- **Animaciones** de entrada (slideUp, fadeIn)
+- **Tabs** con indicador activo
+- **Forms** con estados focus
+- **Selector de roles** visual
+- **Spinner** de carga
+- **Alertas** de colores (success/error/info)
+
+---
+
+## 🔄 Flujos de Usuario Completos
+
+### Flujo: Usuario Lector
+
+```
+1. Visita index.html
+2. Navega sin login (acceso público)
+3. Busca artículos con IA
+4. Ve detalles en modal
+5. (Opcional) Se registra como lector
+```
+
+### Flujo: Investigador Nuevo
+
+```
+1. Accede a login.html
+2. Click en "Solicitar Acceso"
+3. Llena formulario completo:
+   - Nombre completo
+   - Email institucional
+   - Institución
+   - Posición/Afiliación
+   - Contraseña
+   - Selecciona rol "Investigador"
+4. Envía solicitud (estado: pendiente)
+5. Admin revisa en admin.html
+6. Admin aprueba → estado: activo
+7. Recibe notificación (email manual)
+8. Inicia sesión
+9. Aparece botón "Publica tu Investigación"
+10. Llena formulario de publicación
+11. Artículo visible públicamente
+```
+
+### Flujo: Administrador
+
+```
+1. Login con admin@nasa.gov
+2. Redirección automática a admin.html
+3. Ve estadísticas:
+   - Solicitudes pendientes
+   - Usuarios activos
+   - Total usuarios
+4. Pestaña "Solicitudes Pendientes":
+   - Lista de investigadores sin aprobar
+   - Botones: Ver / Aprobar / Rechazar
+5. Pestaña "Todos los Usuarios":
+   - Lista completa con estados
+   - Filtros por rol/estado
+6. Aprobar usuario:
+   - Click en "Aprobar"
+   - Usuario cambia a estado "activo"
+   - Puede iniciar sesión
+7. Rechazar usuario:
+   - Click en "Rechazar"
+   - Usuario eliminado de BD
+```
+
+---
+
+## 🧪 Testing
+
+### Pruebas Manuales Recomendadas
+
+#### Test de Búsqueda IA
+```
+1. Ir a ai_dashboard.html
+2. Seleccionar "Claude"
+3. Ingresar: "¿Qué efectos tiene la microgravedad en plantas?"
+4. Verificar:
+   ✅ Query mejorado por IA
+   ✅ Análisis de IA generado
+   ✅ Resultados relevantes
+   ✅ Estadísticas actualizadas
+```
+
+#### Test de Autenticación
+```
+1. Registro:
+   - Email: test@universidad.edu
+   - Contraseña: test123
+   - Rol: Investigador
+   ✅ Mensaje "pendiente de aprobación"
+
+2. Login antes de aprobación:
+   ✅ Error: "cuenta pendiente"
+
+3. Aprobar desde admin.html
+   ✅ Estado cambia a "activo"
+
+4. Login exitoso:
+   ✅ Redirección a index.html
+   ✅ Botón "Publicar" visible
+```
+
+#### Test de Publicación
+```
+1. Login como investigador
+2. Click en botón flotante
+3. Llenar formulario:
+   - Título: "Test de Arabidopsis"
+   - Categoría: Flora
+   - Resumen: "Estudio de prueba"
+   - Contenido: "Contenido detallado..."
+4. Enviar
+   ✅ Mensaje de éxito
+   ✅ Artículo visible en búsqueda
+   ✅ Autor = nombre del usuario
+```
+
+---
+
+## 🔧 Configuración Avanzada
+
+### Cambiar API Key de Claude
+
+Editar `dashboard/ai_search.php`:
+```php
+define('CLAUDE_API_KEY', 'tu-nueva-key-aqui');
+```
+
+### Personalizar Límites
+
+En `backend/config.php`:
+```php
+define('MAX_FILE_SIZE', 100 * 1024 * 1024); // 100MB
+define('MAX_RESULTS', 50); // Resultados por búsqueda
+```
+
+### Agregar Nueva Categoría
+
+En SQL:
+```sql
+INSERT INTO categorias (nombre, descripcion) 
+VALUES ('Microbiología', 'Estudios de microorganismos');
+```
+
+En HTML (index.html):
+```html
+<a href="#" class="nav-btn" onclick="loadByCategory('Microbiología')">
+    🦠 Microbiología
+</a>
+```
+
+### Cambiar Puerto Docker
+
+En `docker-compose.yml`:
+```yaml
+ports:
+  - "8082:80"  # Cambiar 8081 a 8082
+```
+
+---
+
+## 🎨 Personalización Visual
+
+### Cambiar Paleta de Colores
+
+Editar en `css/dashboard.css`:
+```css
+:root {
+    --purple-main: #TU_COLOR;
+    --green-main: #TU_COLOR;
+    --text-white: #TU_COLOR;
+}
+```
+
+### Modificar Animaciones
+
+Controlar velocidad:
+```css
+@keyframes twinkle {
+    /* Cambiar 3s a 5s para más lento */
+    animation: twinkle 5s ease-in-out infinite;
+}
+```
+
+---
+
+## 📊 Monitoreo y Logs
+
+### Ubicación de Logs
+
+```
+logs/
+├── php-errors.log       # Errores PHP
+├── activity.log         # Actividad de usuarios
+└── mysql-error.log      # Errores MySQL (en container)
+```
+
+### Ver Logs en Tiempo Real
+
+```bash
+# PHP errors
+tail -f logs/php-errors.log
+
+# MySQL logs
+docker-compose logs -f mysql
+
+# Apache logs
+docker-compose logs -f webserver
+```
+
+### Logs de Actividad
+
+La función `logActivity()` en `config.php` registra:
+- Inicio/cierre de sesión
+- Publicaciones creadas
+- Descargas de documentos
+- Búsquedas realizadas
+
+---
+
+## 🚨 Mantenimiento
+
+### Backup de Base de Datos
+
+```bash
+# Crear backup
+docker exec nasa_hackathon_db mysqldump -u root -pnasahack2024 nasa_research_db > backup_$(date +%Y%m%d).sql
+
+# Restaurar backup
+docker exec -i nasa_hackathon_db mysql -u root -pnasahack2024 nasa_research_db < backup_20250105.sql
+```
+
+### Limpiar Datos de Prueba
+
+```sql
+-- Eliminar usuarios de prueba
+DELETE FROM usuarios WHERE email LIKE '%test%';
+
+-- Resetear vistas de artículos
+UPDATE articulos SET vistas = 0;
+
+-- Eliminar logs antiguos
+DELETE FROM actividad_usuarios WHERE fecha_actividad < DATE_SUB(NOW(), INTERVAL 30 DAY);
+```
+
+### Optimizar Base de Datos
+
+```sql
+OPTIMIZE TABLE articulos;
+OPTIMIZE TABLE usuarios;
+ANALYZE TABLE articulos;
+```
+
+---
+
+## 🔐 Seguridad en Producción
+
+### Checklist de Seguridad
+
+- [ ] Cambiar contraseña admin por defecto
+- [ ] Generar nueva API key de Claude
+- [ ] Cambiar credenciales MySQL
+- [ ] Habilitar HTTPS (SSL/TLS)
+- [ ] Configurar CORS restrictivo
+- [ ] Activar rate limiting
+- [ ] Implementar CSRF tokens
+- [ ] Configurar firewall
+- [ ] Backups automáticos
+- [ ] Logs de auditoría
+
+### Variables de Entorno Recomendadas
+
+Crear `.env` (no incluir en Git):
+```env
+DB_HOST=mysql
+DB_NAME=nasa_research_db
+DB_USER=nasauser
+DB_PASS=SuP3rS3cur3P@ssw0rd!
+CLAUDE_API_KEY=sk-ant-api03-xxxxx
+ADMIN_EMAIL=admin@tunasa.com
+ADMIN_PASS=hashed_password_here
+```
+
+---
+
+## 🌟 Características Premium (Futuras)
+
+### En Desarrollo
+
+- 📧 **Sistema de notificaciones** por email (SMTP)
+- 📊 **Dashboard analytics** con Chart.js
+- 🔍 **Búsqueda de texto completo** con Elasticsearch
+- 🎨 **Editor Markdown** para publicaciones
+- 📱 **App móvil** (React Native)
+- 🤝 **Colaboración** en tiempo real
+- 🏆 **Sistema de badges** para investigadores
+- 📈 **Métricas de impacto** (citas, descargas)
+
+---
+
+## 📞 Soporte y Contacto
+
+### Reportar Bugs
+
+Enviar email a: **santiagogabrielfloresruiz@gmail.com**
+
+Incluir:
+- Descripción del problema
+- Pasos para reproducir
+- Logs relevantes
+- Navegador/OS usado
+
+### Solicitar Features
+
+Formato de solicitud:
+```
+Título: [FEATURE] Nombre de la característica
+Descripción: Qué hace
+Beneficio: Por qué es útil
+Prioridad: Alta/Media/Baja
+```
+
+---
+
+## 🏆 Créditos y Agradecimientos
+
+### Tecnologías Utilizadas
+
+- **Backend**: PHP 8.2, MySQL 8.0
+- **Frontend**: HTML5, CSS3, JavaScript ES6+
+- **IA**: Claude 3 Haiku (Anthropic)
+- **Containerización**: Docker, Docker Compose
+- **Fuentes**: NASA OSDR (Open Science Data Repository)
+
+### Equipo BOTSITOSSS
+
+Desarrollado con 💙 por estudiantes de la UTM durante un hackathon.
+
+**"Somos 3 amigos que quisimos probar nuestras habilidades y ver de qué éramos capaces."**
+
+---
+
+## 📖 Documentación Adicional
+
+### Links Útiles
+
+- [Anthropic Claude Docs](https://docs.anthropic.com/claude/docs)
+- [NASA OSDR](https://osdr.nasa.gov/)
+- [PHP Manual](https://www.php.net/manual/)
+- [MySQL 8.0 Reference](https://dev.mysql.com/doc/refman/8.0/en/)
+- [Docker Documentation](https://docs.docker.com/)
+
+### Guías Relacionadas
+
+- `INSTALL.md` - Instalación detallada
+- `API.md` - Documentación completa de APIs
+- `CONTRIBUTING.md` - Guía de contribución
+- `CHANGELOG.md` - Historial de cambios
+
+---
+
+## ⚖️ Licencia
+
+Este proyecto fue desarrollado para fines educativos durante un hackathon organizado por NASA Space Apps Challenge.
+
+**Uso educativo y de investigación únicamente.**
+
+---
+
+## 🎯 Estado del Proyecto
+
+| Componente | Estado | Versión |
+|------------|--------|---------|
+| Backend PHP | ✅ Estable | 1.0.0 |
+| Base de Datos | ✅ Estable | 1.0.0 |
+| Frontend | ✅ Estable | 1.0.0 |
+| Búsqueda IA | ✅ Funcional | 1.0.0 |
+| i18n | ⚠️ Parcial | 0.9.0 |
+| Testing | ⚠️ Manual | 0.8.0 |
+| Documentación | ✅ Completa | 1.0.0 |
+
+**Última actualización:** Octubre 2025
+
+---
+
+**¡Gracias por usar NASA Bio Research Platform! 🚀🔬**
+
+*"Explorando el universo biológico, un artículo a la vez."*

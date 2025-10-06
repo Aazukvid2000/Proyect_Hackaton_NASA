@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - NASA Bio Research</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --purple-dark: #2a3f5a;
+            --purple-main: #3E5F8A;
+            --purple-light: #5a7fb3;
+            --purple-lighter: #7a9fc8;
+            --green-dark: #1b5e20;
+            --green-main: #2e7d32;
+            --green-light: #4caf50;
+            --green-accent: #66bb6a;
+            --bg-dark: #0a0015;
+            --bg-card: #1a0a2e;
+            --text-white: #ffffff;
+            --text-gray: #b0b0b0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0520 0%, #1a1a3e 25%, #2a3f5a 50%, #1a2840 75%, #0d1b2a 100%);
+            color: var(--text-white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(42, 63, 90, 0.95) 0%, rgba(26, 10, 46, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 1000;
+            border-bottom: 2px solid var(--purple-light);
+            box-shadow: 0 4px 20px rgba(62, 95, 138, 0.4);
+        }
+
+        .logo-container {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .logo {
+            height: 60px;
+            width: auto;
+            max-width: 120px;
+            filter: drop-shadow(0 0 10px rgba(90, 127, 179, 0.6));
+        }
+
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--purple-main) 0%, var(--purple-light) 100%);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(62, 95, 138, 0.3);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, var(--green-main) 0%, var(--green-light) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .main-content {
+            margin-top: 120px;
+            padding: 40px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, rgba(42, 63, 90, 0.6) 0%, rgba(26, 10, 46, 0.8) 100%);
+            border-radius: 20px;
+            padding: 40px;
+            border: 2px solid var(--purple-light);
+            box-shadow: 0 10px 40px rgba(62, 95, 138, 0.4);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid var(--green-light);
+            background: linear-gradient(135deg, var(--purple-main) 0%, var(--green-main) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 8px 30px rgba(76, 175, 80, 0.3);
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 32px;
+            color: var(--green-light);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .profile-role {
+            font-size: 18px;
+            color: var(--green-accent);
+            margin-bottom: 20px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px 25px;
+            background: rgba(76, 175, 80, 0.2);
+            border-radius: 12px;
+            border: 1px solid var(--green-light);
+        }
+
+        .stat-number {
+            font-size: 28px;
+            color: var(--green-light);
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-top: 5px;
+        }
+
+        .info-section {
+            background: linear-gradient(135deg, rgba(42, 63, 90, 0.6) 0%, rgba(26, 10, 46, 0.8) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid var(--purple-main);
+            box-shadow: 0 5px 20px rgba(62, 95, 138, 0.3);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: var(--green-light);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            background: rgba(42, 63, 90, 0.4);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--purple-light);
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: var(--text-white);
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green-main), var(--green-light));
+            color: white;
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--purple-light);
+            color: var(--purple-lighter);
+        }
+
+        .btn-secondary:hover {
+            background: var(--purple-main);
+            color: white;
+            border-color: var(--purple-main);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #c62828, #e53935);
+            color: white;
+            box-shadow: 0 5px 20px rgba(198, 40, 40, 0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(198, 40, 40, 0.6);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-gray);
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert.error {
+            background: rgba(198, 40, 40, 0.2);
+            border: 2px solid #c62828;
+            color: #ff5252;
+        }
+
+        .alert.success {
+            background: rgba(46, 125, 50, 0.2);
+            border: 2px solid var(--green-main);
+            color: var(--green-accent);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo-container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" alt="NASA Logo" class="logo">
+        <h2 style="color: var(--green-light);">Mi Perfil</h2>
+    </div>
+    <div class="nav-right">
+        <a href="index.html" class="nav-btn">🏠 Inicio</a>
+        <a href="#" class="nav-btn" onclick="cerrarSesion()">🚪 Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div id="alertBox" class="alert"></div>
+
+    <div id="loadingContent" class="loading">
+        Cargando información del perfil
+    </div>
+
+    <div id="profileContent" style="display: none;">
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar"></div>
+            <div class="profile-info">
+                <h1 class="profile-name" id="profileName">Cargando...</h1>
+                <p class="profile-role" id="profileRole">Investigador</p>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="statPublicaciones">0</div>
+                        <div class="stat-label">Publicaciones</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="statCitas">0</div>
+                        <div class="stat-label">Citas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="statDias">0</div>
+                        <div class="stat-label">Días Activo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2 class="section-title">📋 Información Personal</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Nombre Completo</div>
+                    <div class="info-value" id="infoNombre">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Correo Electrónico</div>
+                    <div class="info-value" id="infoEmail">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Institución</div>
+                    <div class="info-value" id="infoInstitucion">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Afiliación/Cargo</div>
+                    <div class="info-value" id="infoAfiliacion">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Rol en la Plataforma</div>
+                    <div class="info-value" id="infoRol">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Estado de la Cuenta</div>
+                    <div class="info-value" id="infoEstado">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Miembro Desde</div>
+                    <div class="info-value" id="infoRegistro">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Último Acceso</div>
+                    <div class="info-value" id="infoUltimoAcceso">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2 class="section-title">⚙️ Opciones de Cuenta</h2>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="editarPerfil()">✏️ Editar Perfil</button>
+                <button class="btn btn-secondary" onclick="cambiarContrasena()">🔒 Cambiar Contraseña</button>
+                <button class="btn btn-danger" onclick="confirmarCerrarSesion()">🚪 Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let usuarioActual = null;
+
+window.addEventListener('DOMContentLoaded', async function() {
+    await cargarPerfil();
+});
+
+async function cargarPerfil() {
+    try {
+        const response = await fetch('/backend/auth.php?action=verificar');
+        const data = await response.json();
+        
+        if (!data.success || !data.usuario) {
+            showAlert('error', 'No hay sesión activa. Redirigiendo al login...');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+            return;
+        }
+        
+        usuarioActual = data.usuario;
+        mostrarPerfil(data.usuario);
+        
+    } catch (error) {
+        console.error('Error cargando perfil:', error);
+        showAlert('error', 'Error al cargar la información del perfil');
+    }
+}
+
+function mostrarPerfil(usuario) {
+    document.getElementById('loadingContent').style.display = 'none';
+    document.getElementById('profileContent').style.display = 'block';
+    
+    const avatar = document.getElementById('profileAvatar');
+    if (usuario.foto_perfil) {
+        avatar.innerHTML = `<img src="${usuario.foto_perfil}" alt="Foto de perfil">`;
+    } else {
+        const iniciales = usuario.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        avatar.textContent = iniciales;
+    }
+    
+    document.getElementById('profileName').textContent = usuario.nombre || 'Usuario';
+    document.getElementById('profileRole').textContent = usuario.rol === 'admin' ? 'Administrador' : 'Investigador';
+    
+    document.getElementById('statPublicaciones').textContent = usuario.num_publicaciones || '0';
+    document.getElementById('statCitas').textContent = usuario.num_citas || '0';
+    
+    if (usuario.created_at) {
+    const fechaCreacion = new Date(usuario.created_at);
+        const diasActivo = Math.floor((new Date() - fechaCreacion) / (1000 * 60 * 60 * 24));
+        document.getElementById('statDias').textContent = diasActivo;
+    } else {
+        document.getElementById('statDias').textContent = '0';
+    }
+    
+    document.getElementById('infoNombre').textContent = usuario.nombre || '-';
+    document.getElementById('infoEmail').textContent = usuario.email || '-';
+    document.getElementById('infoInstitucion').textContent = usuario.institucion || '-';
+    document.getElementById('infoAfiliacion').textContent = usuario.afiliacion || '-';
+    
+    const rolTexto = usuario.rol === 'admin' ? 'Administrador' : 
+                     usuario.rol === 'investigador' ? 'Investigador' : 'Lector';
+    document.getElementById('infoRol').textContent = rolTexto;
+    
+    const estadoTexto = usuario.estado === 'activo' ? '✅ Activo' : 
+                       usuario.estado === 'pendiente' ? '⏳ Pendiente' : '❌ Inactivo';
+    document.getElementById('infoEstado').textContent = estadoTexto;
+    
+    if (usuario.created_at) {
+    document.getElementById('infoRegistro').textContent = formatearFecha(usuario.created_at);
+    }
+    
+    if (usuario.ultimo_acceso) {
+        document.getElementById('infoUltimoAcceso').textContent = formatearFecha(usuario.ultimo_acceso);
+    }
+}
+
+function formatearFecha(fechaString) {
+    const fecha = new Date(fechaString);
+    return fecha.toLocaleDateString('es-ES', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function editarPerfil() {
+    alert('Funcionalidad de edición de perfil en desarrollo.\n\nPróximamente podrás actualizar:\n- Foto de perfil\n- Información de contacto\n- Institución y afiliación');
+}
+
+function cambiarContrasena() {
+    const nuevaPassword = prompt('Ingresa tu nueva contraseña (mínimo 6 caracteres):');
+    
+    if (!nuevaPassword) {
+        return;
+    }
+    
+    if (nuevaPassword.length < 6) {
+        alert('La contraseña debe tener al menos 6 caracteres');
+        return;
+    }
+    
+    const confirmarPassword = prompt('Confirma tu nueva contraseña:');
+    
+    if (nuevaPassword !== confirmarPassword) {
+        alert('Las contraseñas no coinciden');
+        return;
+    }
+    
+    alert('Funcionalidad de cambio de contraseña en desarrollo.\n\nPor favor contacta al administrador para cambiar tu contraseña.');
+}
+
+function confirmarCerrarSesion() {
+    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+        cerrarSesion();
+    }
+}
+
+async function cerrarSesion() {
+    try {
+        const response = await fetch('/backend/auth.php?action=logout', {
+            method: 'POST'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            showAlert('success', 'Sesión cerrada exitosamente. Redirigiendo...');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+    } catch (error) {
+        console.error('Error cerrando sesión:', error);
+        showAlert('error', 'Error al cerrar sesión');
+    }
+}
+
+function showAlert(type, message) {
+    const alertBox = document.getElementById('alertBox');
+    alertBox.className = `alert ${type} show`;
+    alertBox.textContent = message;
+    
+    setTimeout(() => {
+        alertBox.classList.remove('show');
+    }, 5000);
+}
+</script>
+
+</body>
+</html>
